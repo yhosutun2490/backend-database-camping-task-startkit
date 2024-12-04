@@ -143,9 +143,9 @@ where "USER".name = 'Q太郎'
 
 -- 3-4 刪除：新增一個專長 空中瑜伽 至 SKILL 資料表，之後刪除此專長。
 insert into "SKILL" (name) values
-('空中瑜伽')
+('空中瑜伽');
 delete from "SKILL" 
-where name = '空中瑜伽'
+where name = '空中瑜伽';
 
 
 --  ████████  █████   █    █   █ 
@@ -193,7 +193,7 @@ cross join (
 		name = '重訓'
 ) as cross_skill_table
 where
-	"USER".name = '李燕容'
+	"USER".name = '李燕容';
 
 
 -- ████████  █████   █    █████ 
@@ -209,29 +209,77 @@ where
         -- 1. 預約人設為`王小明`
         -- 2. 預約時間`booking_at` 設為2024-11-24 16:00:00
         -- 3. 狀態`status` 設定為即將授課
+insert into "COURSE_BOOKING" (user_id, course_id,booking_at,status) 
+select
+    u.id as user_id, 
+    c.id as course_id, 
+    '2024-11-24 16:00:00' as booking_at, 
+    '即將授課' as status
+from "COURSE" as c
+inner join "USER" as u on u.name = '王小明'
+where c.name = '重訓基礎課';
+
     -- 2. 新增： `好野人` 預約 `李燕容` 的課程
         -- 1. 預約人設為 `好野人`
         -- 2. 預約時間`booking_at` 設為2024-11-24 16:00:00
         -- 3. 狀態`status` 設定為即將授課
+insert into "COURSE_BOOKING" (user_id, course_id,booking_at,status) 
+select
+    u.id as user_id, 
+    c.id as course_id, 
+    '2024-11-24 16:00:00' as booking_at, 
+    '即將授課' as status
+from "COURSE" as c
+inner join "USER" as u on u.name = '好野人'
+where c.name = '重訓基礎課';
 
 -- 5-2. 修改：`王小明`取消預約 `李燕容` 的課程，請在`COURSE_BOOKING`更新該筆預約資料：
     -- 1. 取消預約時間`cancelled_at` 設為2024-11-24 17:00:00
     -- 2. 狀態`status` 設定為課程已取消
+update "COURSE_BOOKING" 
+set cancelled_at = '2024-11-24 17:00:00',
+status ='課程已取消'
+where user_id = (select id from "USER" where name = '王小明')
+and course_id = (select id from "COURSE" where name = '重訓基礎課');
 
 -- 5-3. 新增：`王小明`再次預約 `李燕容`   的課程，請在`COURSE_BOOKING`新增一筆資料：
     -- 1. 預約人設為`王小明`
     -- 2. 預約時間`booking_at` 設為2024-11-24 17:10:25
     -- 3. 狀態`status` 設定為即將授課
+insert into "COURSE_BOOKING" (user_id, course_id,booking_at,status) 
+select
+    u.id as user_id, 
+    c.id as course_id, 
+    '2024-11-24 17:10:25' as booking_at, 
+    '即將授課' as status
+from "COURSE" as c
+inner join "USER" as u on u.name = '王小明'
+where c.name = '重訓基礎課';
 
 -- 5-4. 查詢：取得王小明所有的預約紀錄，包含取消預約的紀錄
+select * from "COURSE_BOOKING" 
+inner join "USER" as u on u.name = '王小明'
+where user_id = u.id;
 
 -- 5-5. 修改：`王小明` 現在已經加入直播室了，請在`COURSE_BOOKING`更新該筆預約資料（請注意，不要更新到已經取消的紀錄）：
     -- 1. 請在該筆預約記錄他的加入直播室時間 `join_at` 設為2024-11-25 14:01:59
     -- 2. 狀態`status` 設定為上課中
+update "COURSE_BOOKING" 
+set  join_at = '2024-11-25 14:01:59',
+status = '上課中'
+where user_id = (select id from "USER" where name = '王小明') and status = '即將授課';
 
 -- 5-6. 查詢：計算用戶王小明的購買堂數，顯示須包含以下欄位： user_id , total。 (需使用到 SUM 函式與 Group By)
+select sum(c.purchased_credits) from "CREDIT_PURCHASE" as c 
+inner join "USER" u on u.id = user_id 
+where u.name = '王小明'
+group by u.name;
 
 -- 5-7. 查詢：計算用戶王小明的已使用堂數，顯示須包含以下欄位： user_id , total。 (需使用到 Count 函式與 Group By)
+select count(distinct(c.id)) as total user_id from "COURSE_BOOKING" as c 
+inner join "USER" as u on user_id = u.id 
+where u.name = '王小明' and join_at is not null
+group by c.user_id;
 
 -- 5-8. [挑戰題] 查詢：請在一次查詢中，計算用戶王小明的剩餘可用堂數，顯示須包含以下欄位： user_id , remaining_credit
     -- 提示：
@@ -239,6 +287,39 @@ where
     -- from ( 用戶王小明的購買堂數 ) as "CREDIT_PURCHASE"
     -- inner join ( 用戶王小明的已使用堂數) as "COURSE_BOOKING"
     -- on "COURSE_BOOKING".user_id = "CREDIT_PURCHASE".user_id;
+select
+	("CREDIT_PURCHASE".total_credit - "COURSE_BOOKING".used_credit) as remaining_credit,
+	"CREDIT_PURCHASE".user_id as user_id
+from
+	(
+	select
+		sum(cp.credit_amount) as total_credit, u.id as user_id
+	from
+		"CREDIT_PURCHASE" as c
+	inner join "CREDIT_PACKAGE" as cp on
+		cp.id = c.credit_package_id
+	inner join "USER" as u on
+		u.id = c.user_id
+	where
+		u.name = '王小明'
+	group by
+		u.id
+ ) as "CREDIT_PURCHASE"
+inner join (
+	select
+		count(distinct(c.id)) as used_credit, user_id
+	from
+		"COURSE_BOOKING" as c
+	inner join "USER" as u on
+		user_id = u.id
+	where
+		u.name = '王小明'
+		and join_at is not null
+	group by
+		c.user_id
+) as "COURSE_BOOKING"
+on
+	"COURSE_BOOKING".user_id = "CREDIT_PURCHASE".user_id;
 
 
 -- ████████  █████   █     ███  
