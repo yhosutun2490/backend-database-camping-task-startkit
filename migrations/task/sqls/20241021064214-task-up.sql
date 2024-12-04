@@ -48,35 +48,35 @@ select * from "USER" limit 3;
     -- 1. 名稱為 `7 堂組合包方案`，價格為`1,400` 元，堂數為`7`
     -- 2. 名稱為`14 堂組合包方案`，價格為`2,520` 元，堂數為`14`
     -- 3. 名稱為 `21 堂組合包方案`，價格為`4,800` 元，堂數為`21`
-insert into "CREDIT_PACKAGE"(name, price, credit_amount) values 
-('7 堂組合包方案',1400,7),
-('14 堂組合包方案',2520,14),
-('21 堂組合包方案',4800,21);
+-- insert into "CREDIT_PACKAGE"(name, price, credit_amount) values 
+-- ('7 堂組合包方案',1400,7),
+-- ('14 堂組合包方案',2520,14),
+-- ('21 堂組合包方案',4800,21);
 
 -- 2-2. 新增：在 `CREDIT_PURCHASE` 資料表，新增三筆資料：（請使用 name 欄位做子查詢）
     -- 1. `王小明` 購買 `14 堂組合包方案`
     -- 2. `王小明` 購買 `21 堂組合包方案`
     -- 3. `好野人` 購買 `14 堂組合包方案`
-INSERT INTO "CREDIT_PURCHASE" (user_id, credit_package_id, price_paid, purchased_credits)
-VALUES
-(
-    (SELECT id FROM "USER" WHERE name = '王小明'),
-    (SELECT id FROM "CREDIT_PACKAGE" WHERE name = '14 堂組合包方案'),
-    (SELECT price FROM "CREDIT_PACKAGE" WHERE name = '14 堂組合包方案'),
-    1
-),
-(
-    (SELECT id FROM "USER" WHERE name = '王小明'),
-    (SELECT id FROM "CREDIT_PACKAGE" WHERE name = '21 堂組合包方案'),
-    (SELECT price FROM "CREDIT_PACKAGE" WHERE name = '21 堂組合包方案'),
-    1
-),
-(
-    (SELECT id FROM "USER" WHERE name = '好野人'),
-    (SELECT id FROM "CREDIT_PACKAGE" WHERE name = '14 堂組合包方案'),
-    (SELECT price FROM "CREDIT_PACKAGE" WHERE name = '14 堂組合包方案'),
-    1
-);
+-- INSERT INTO "CREDIT_PURCHASE" (user_id, credit_package_id, price_paid, purchased_credits)
+-- VALUES
+-- (
+--     (SELECT id FROM "USER" WHERE name = '王小明'),
+--     (SELECT id FROM "CREDIT_PACKAGE" WHERE name = '14 堂組合包方案'),
+--     (SELECT price FROM "CREDIT_PACKAGE" WHERE name = '14 堂組合包方案'),
+--     1
+-- ),
+-- (
+--     (SELECT id FROM "USER" WHERE name = '王小明'),
+--     (SELECT id FROM "CREDIT_PACKAGE" WHERE name = '21 堂組合包方案'),
+--     (SELECT price FROM "CREDIT_PACKAGE" WHERE name = '21 堂組合包方案'),
+--     1
+-- ),
+-- (
+--     (SELECT id FROM "USER" WHERE name = '好野人'),
+--     (SELECT id FROM "CREDIT_PACKAGE" WHERE name = '14 堂組合包方案'),
+--     (SELECT price FROM "CREDIT_PACKAGE" WHERE name = '14 堂組合包方案'),
+--     1
+-- );
 
 
 -- ████████  █████   █    ████   
@@ -90,62 +90,62 @@ VALUES
     -- 1. 將用戶`李燕容`新增為教練，並且年資設定為2年（提示：使用`李燕容`的email ，取得 `李燕容` 的 `id` ）
     -- 2. 將用戶`肌肉棒子`新增為教練，並且年資設定為2年
     -- 3. 將用戶`Q太郎`新增為教練，並且年資設定為2年
-insert into "COACH" (user_id, experience_years) values
-((select id from "USER" where email = 'lee2000@hexschooltest.io'),2),
-((select id from "USER" where email = 'muscle@hexschooltest.io'),2),
-((select id from "USER" where email = 'starplatinum@hexschooltest.io'),2);
+-- insert into "COACH" (user_id, experience_years) values
+-- ((select id from "USER" where email = 'lee2000@hexschooltest.io'),2),
+-- ((select id from "USER" where email = 'muscle@hexschooltest.io'),2),
+-- ((select id from "USER" where email = 'starplatinum@hexschooltest.io'),2);
 
 -- 3-2. 新增：承1，為三名教練新增專長資料至 `COACH_LINK_SKILL` ，資料需求如下：
     -- 1. 所有教練都有 `重訓` 專長
-insert into "COACH_LINK_SKILL" (coach_id,skill_id)
-select coach.id as coach_id , skill_cross_table.id as skill_id 
-from "COACH" coach
-cross join (
-    select id
-    from "SKILL"
-    where name = '重訓'
-) skill_cross_table;
-    -- 2. 教練`肌肉棒子` 需要有 `瑜伽` 專長
-insert into "COACH_LINK_SKILL" (coach_id,skill_id)
-select "COACH".id as coach_id, 
-"SKILL".id as skill_id
-from "COACH" 
-cross join "SKILL" 
-inner join "USER" on "COACH".user_id = "USER".id
-where "USER".name = '肌肉棒子' and "SKILL".name = '瑜伽';
+-- insert into "COACH_LINK_SKILL" (coach_id,skill_id)
+-- select coach.id as coach_id , skill_cross_table.id as skill_id 
+-- from "COACH" coach
+-- cross join (
+--     select id
+--     from "SKILL"
+--     where name = '重訓'
+-- ) skill_cross_table;
+--     -- 2. 教練`肌肉棒子` 需要有 `瑜伽` 專長
+-- insert into "COACH_LINK_SKILL" (coach_id,skill_id)
+-- select "COACH".id as coach_id, 
+-- "SKILL".id as skill_id
+-- from "COACH" 
+-- cross join "SKILL" 
+-- inner join "USER" on "COACH".user_id = "USER".id
+-- where "USER".name = '肌肉棒子' and "SKILL".name = '瑜伽';
 
     -- 3. 教練`Q太郎` 需要有 `有氧運動` 與 `復健訓練` 專長
-insert into "COACH_LINK_SKILL" (coach_id,skill_id)
-select "COACH".id as coach_id, 
-"SKILL".id as skill_id
-from "COACH" 
-cross join "SKILL" 
-inner join "USER" on "COACH".user_id = "USER".id
-where "USER".name = 'Q太郎' and "SKILL".name in ('有氧運動','復健訓練');
+-- insert into "COACH_LINK_SKILL" (coach_id,skill_id)
+-- select "COACH".id as coach_id, 
+-- "SKILL".id as skill_id
+-- from "COACH" 
+-- cross join "SKILL" 
+-- inner join "USER" on "COACH".user_id = "USER".id
+-- where "USER".name = 'Q太郎' and "SKILL".name in ('有氧運動','復健訓練');
 
 -- 3-3 修改：更新教練的經驗年數，資料需求如下：
     -- 1. 教練`肌肉棒子` 的經驗年數為3年
-update "COACH" set experience_years = 3
-where "COACH".user_id  = (
-select "COACH".user_id from "COACH"
-inner join "USER" on "USER".id = "COACH".user_id 
-where "USER".name = '肌肉棒子'
-);
+-- update "COACH" set experience_years = 3
+-- where "COACH".user_id  = (
+-- select "COACH".user_id from "COACH"
+-- inner join "USER" on "USER".id = "COACH".user_id 
+-- where "USER".name = '肌肉棒子'
+-- );
 
-    -- 2. 教練`Q太郎` 的經驗年數為5年
-update "COACH" set experience_years = 5
-where "COACH".user_id  = (
-select "COACH".user_id from "COACH"
-inner join "USER" on "USER".id = "COACH".user_id 
-where "USER".name = 'Q太郎'
-);
+--     -- 2. 教練`Q太郎` 的經驗年數為5年
+-- update "COACH" set experience_years = 5
+-- where "COACH".user_id  = (
+-- select "COACH".user_id from "COACH"
+-- inner join "USER" on "USER".id = "COACH".user_id 
+-- where "USER".name = 'Q太郎'
+-- );
 
 
 -- 3-4 刪除：新增一個專長 空中瑜伽 至 SKILL 資料表，之後刪除此專長。
-insert into "SKILL" (name) values
-('空中瑜伽');
-delete from "SKILL" 
-where name = '空中瑜伽';
+-- insert into "SKILL" (name) values
+-- ('空中瑜伽');
+-- delete from "SKILL" 
+-- where name = '空中瑜伽';
 
 
 --  ████████  █████   █    █   █ 
@@ -164,36 +164,36 @@ where name = '空中瑜伽';
     -- 5. 授課結束時間`end_at`設定為2024-11-25 16:00:00
     -- 6. 最大授課人數`max_participants` 設定為10
     -- 7. 授課連結設定`meeting_url`為 https://test-meeting.test.io
-insert
-	into
-	"COURSE" (
-	user_id,
-	skill_id,
-	name,
-	start_at,
-	end_at,
-	max_participants,
-	meeting_url)
-select
-	"USER".id as user_id,
-	cross_skill_table.id as skill_id,
-	'重訓基礎課' as name,
-	'2024-11-25 14:00:00' as start_at,
-	'2024-11-25 16:00:00' as end_at ,
-	10 as max_participants ,
-	'https://test-meeting.test.io' as meeting_url
-from
-	"USER"
-cross join (
-	select
-		id
-	from
-		"SKILL"
-	where
-		name = '重訓'
-) as cross_skill_table
-where
-	"USER".name = '李燕容';
+-- insert
+-- 	into
+-- 	"COURSE" (
+-- 	user_id,
+-- 	skill_id,
+-- 	name,
+-- 	start_at,
+-- 	end_at,
+-- 	max_participants,
+-- 	meeting_url)
+-- select
+-- 	"USER".id as user_id,
+-- 	cross_skill_table.id as skill_id,
+-- 	'重訓基礎課' as name,
+-- 	'2024-11-25 14:00:00' as start_at,
+-- 	'2024-11-25 16:00:00' as end_at ,
+-- 	10 as max_participants ,
+-- 	'https://test-meeting.test.io' as meeting_url
+-- from
+-- 	"USER"
+-- cross join (
+-- 	select
+-- 		id
+-- 	from
+-- 		"SKILL"
+-- 	where
+-- 		name = '重訓'
+-- ) as cross_skill_table
+-- where
+-- 	"USER".name = '李燕容';
 
 
 -- ████████  █████   █    █████ 
@@ -209,77 +209,77 @@ where
         -- 1. 預約人設為`王小明`
         -- 2. 預約時間`booking_at` 設為2024-11-24 16:00:00
         -- 3. 狀態`status` 設定為即將授課
-insert into "COURSE_BOOKING" (user_id, course_id,booking_at,status) 
-select
-    u.id as user_id, 
-    c.id as course_id, 
-    '2024-11-24 16:00:00' as booking_at, 
-    '即將授課' as status
-from "COURSE" as c
-inner join "USER" as u on u.name = '王小明'
-where c.name = '重訓基礎課';
+-- insert into "COURSE_BOOKING" (user_id, course_id,booking_at,status) 
+-- select
+--     u.id as user_id, 
+--     c.id as course_id, 
+--     '2024-11-24 16:00:00' as booking_at, 
+--     '即將授課' as status
+-- from "COURSE" as c
+-- inner join "USER" as u on u.name = '王小明'
+-- where c.name = '重訓基礎課';
 
     -- 2. 新增： `好野人` 預約 `李燕容` 的課程
         -- 1. 預約人設為 `好野人`
         -- 2. 預約時間`booking_at` 設為2024-11-24 16:00:00
         -- 3. 狀態`status` 設定為即將授課
-insert into "COURSE_BOOKING" (user_id, course_id,booking_at,status) 
-select
-    u.id as user_id, 
-    c.id as course_id, 
-    '2024-11-24 16:00:00' as booking_at, 
-    '即將授課' as status
-from "COURSE" as c
-inner join "USER" as u on u.name = '好野人'
-where c.name = '重訓基礎課';
+-- insert into "COURSE_BOOKING" (user_id, course_id,booking_at,status) 
+-- select
+--     u.id as user_id, 
+--     c.id as course_id, 
+--     '2024-11-24 16:00:00' as booking_at, 
+--     '即將授課' as status
+-- from "COURSE" as c
+-- inner join "USER" as u on u.name = '好野人'
+-- where c.name = '重訓基礎課';
 
 -- 5-2. 修改：`王小明`取消預約 `李燕容` 的課程，請在`COURSE_BOOKING`更新該筆預約資料：
     -- 1. 取消預約時間`cancelled_at` 設為2024-11-24 17:00:00
     -- 2. 狀態`status` 設定為課程已取消
-update "COURSE_BOOKING" 
-set cancelled_at = '2024-11-24 17:00:00',
-status ='課程已取消'
-where user_id = (select id from "USER" where name = '王小明')
-and course_id = (select id from "COURSE" where name = '重訓基礎課');
+-- update "COURSE_BOOKING" 
+-- set cancelled_at = '2024-11-24 17:00:00',
+-- status ='課程已取消'
+-- where user_id = (select id from "USER" where name = '王小明')
+-- and course_id = (select id from "COURSE" where name = '重訓基礎課');
 
 -- 5-3. 新增：`王小明`再次預約 `李燕容`   的課程，請在`COURSE_BOOKING`新增一筆資料：
     -- 1. 預約人設為`王小明`
     -- 2. 預約時間`booking_at` 設為2024-11-24 17:10:25
     -- 3. 狀態`status` 設定為即將授課
-insert into "COURSE_BOOKING" (user_id, course_id,booking_at,status) 
-select
-    u.id as user_id, 
-    c.id as course_id, 
-    '2024-11-24 17:10:25' as booking_at, 
-    '即將授課' as status
-from "COURSE" as c
-inner join "USER" as u on u.name = '王小明'
-where c.name = '重訓基礎課';
+-- insert into "COURSE_BOOKING" (user_id, course_id,booking_at,status) 
+-- select
+--     u.id as user_id, 
+--     c.id as course_id, 
+--     '2024-11-24 17:10:25' as booking_at, 
+--     '即將授課' as status
+-- from "COURSE" as c
+-- inner join "USER" as u on u.name = '王小明'
+-- where c.name = '重訓基礎課';
 
 -- 5-4. 查詢：取得王小明所有的預約紀錄，包含取消預約的紀錄
-select * from "COURSE_BOOKING" 
-inner join "USER" as u on u.name = '王小明'
-where user_id = u.id;
+-- select * from "COURSE_BOOKING" 
+-- inner join "USER" as u on u.name = '王小明'
+-- where user_id = u.id;
 
 -- 5-5. 修改：`王小明` 現在已經加入直播室了，請在`COURSE_BOOKING`更新該筆預約資料（請注意，不要更新到已經取消的紀錄）：
     -- 1. 請在該筆預約記錄他的加入直播室時間 `join_at` 設為2024-11-25 14:01:59
     -- 2. 狀態`status` 設定為上課中
-update "COURSE_BOOKING" 
-set  join_at = '2024-11-25 14:01:59',
-status = '上課中'
-where user_id = (select id from "USER" where name = '王小明') and status = '即將授課';
+-- update "COURSE_BOOKING" 
+-- set  join_at = '2024-11-25 14:01:59',
+-- status = '上課中'
+-- where user_id = (select id from "USER" where name = '王小明') and status = '即將授課';
 
 -- 5-6. 查詢：計算用戶王小明的購買堂數，顯示須包含以下欄位： user_id , total。 (需使用到 SUM 函式與 Group By)
-select sum(c.purchased_credits) from "CREDIT_PURCHASE" as c 
-inner join "USER" u on u.id = user_id 
-where u.name = '王小明'
-group by u.name;
+-- select sum(c.purchased_credits) from "CREDIT_PURCHASE" as c 
+-- inner join "USER" u on u.id = user_id 
+-- where u.name = '王小明'
+-- group by u.name;
 
 -- 5-7. 查詢：計算用戶王小明的已使用堂數，顯示須包含以下欄位： user_id , total。 (需使用到 Count 函式與 Group By)
-select count(distinct(c.id)) as total, user_id from "COURSE_BOOKING" as c 
-inner join "USER" as u on user_id = u.id 
-where u.name = '王小明' and join_at is not null
-group by c.user_id;
+-- select count(distinct(c.id)) as total, user_id from "COURSE_BOOKING" as c 
+-- inner join "USER" as u on user_id = u.id 
+-- where u.name = '王小明' and join_at is not null
+-- group by c.user_id;
 
 -- 5-8. [挑戰題] 查詢：請在一次查詢中，計算用戶王小明的剩餘可用堂數，顯示須包含以下欄位： user_id , remaining_credit
     -- 提示：
@@ -287,39 +287,39 @@ group by c.user_id;
     -- from ( 用戶王小明的購買堂數 ) as "CREDIT_PURCHASE"
     -- inner join ( 用戶王小明的已使用堂數) as "COURSE_BOOKING"
     -- on "COURSE_BOOKING".user_id = "CREDIT_PURCHASE".user_id;
-select
-	("CREDIT_PURCHASE".total_credit - "COURSE_BOOKING".used_credit) as remaining_credit,
-	"CREDIT_PURCHASE".user_id as user_id
-from
-	(
-	select
-		sum(cp.credit_amount) as total_credit, u.id as user_id
-	from
-		"CREDIT_PURCHASE" as c
-	inner join "CREDIT_PACKAGE" as cp on
-		cp.id = c.credit_package_id
-	inner join "USER" as u on
-		u.id = c.user_id
-	where
-		u.name = '王小明'
-	group by
-		u.id
- ) as "CREDIT_PURCHASE"
-inner join (
-	select
-		count(distinct(c.id)) as used_credit, user_id
-	from
-		"COURSE_BOOKING" as c
-	inner join "USER" as u on
-		user_id = u.id
-	where
-		u.name = '王小明'
-		and join_at is not null
-	group by
-		c.user_id
-) as "COURSE_BOOKING"
-on
-	"COURSE_BOOKING".user_id = "CREDIT_PURCHASE".user_id;
+-- select
+-- 	("CREDIT_PURCHASE".total_credit - "COURSE_BOOKING".used_credit) as remaining_credit,
+-- 	"CREDIT_PURCHASE".user_id as user_id
+-- from
+-- 	(
+-- 	select
+-- 		sum(cp.credit_amount) as total_credit, u.id as user_id
+-- 	from
+-- 		"CREDIT_PURCHASE" as c
+-- 	inner join "CREDIT_PACKAGE" as cp on
+-- 		cp.id = c.credit_package_id
+-- 	inner join "USER" as u on
+-- 		u.id = c.user_id
+-- 	where
+-- 		u.name = '王小明'
+-- 	group by
+-- 		u.id
+--  ) as "CREDIT_PURCHASE"
+-- inner join (
+-- 	select
+-- 		count(distinct(c.id)) as used_credit, user_id
+-- 	from
+-- 		"COURSE_BOOKING" as c
+-- 	inner join "USER" as u on
+-- 		user_id = u.id
+-- 	where
+-- 		u.name = '王小明'
+-- 		and join_at is not null
+-- 	group by
+-- 		c.user_id
+-- ) as "COURSE_BOOKING"
+-- on
+-- 	"COURSE_BOOKING".user_id = "CREDIT_PURCHASE".user_id;
 
 
 -- ████████  █████   █     ███  
