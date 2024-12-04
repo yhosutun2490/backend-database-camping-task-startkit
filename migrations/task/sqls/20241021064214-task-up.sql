@@ -276,7 +276,7 @@ where u.name = '王小明'
 group by u.name;
 
 -- 5-7. 查詢：計算用戶王小明的已使用堂數，顯示須包含以下欄位： user_id , total。 (需使用到 Count 函式與 Group By)
-select count(distinct(c.id)) as total user_id from "COURSE_BOOKING" as c 
+select count(distinct(c.id)) as total, user_id from "COURSE_BOOKING" as c 
 inner join "USER" as u on user_id = u.id 
 where u.name = '王小明' and join_at is not null
 group by c.user_id;
